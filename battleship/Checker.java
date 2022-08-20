@@ -4,16 +4,19 @@ import java.util.Arrays;
 
 public class Checker {
 
-    public static boolean checkShot(int[] coordinate, Ship[] ships) {
+    public static char checkShot(int[] coordinate, Ship[] ships) {
         for (Ship ship: ships) {
             for (int i = 0; i < ship.getSize(); i++) {
                 if (Arrays.equals(ship.getLocation().get(i), coordinate)) {
                     ship.setShot(i);
-                    return true;
+                    if (ship.isDead()) {
+                        return 'D';
+                    }
+                    return 'X';
                 }
             }
         }
-        return false;
+        return 'M';
     }
 
     public static String checkCoordinate(int[] coordinate, char[][] matrix) {
@@ -72,9 +75,18 @@ public class Checker {
         return false;
     }
 
-    static boolean isAlreadyShot(int[] coordinate, char[][] matrix) {
+    private static boolean isAlreadyShot(int[] coordinate, char[][] matrix) {
         int x = coordinate[0];
         int y = coordinate[1];
         return matrix[x][y] == 'M' || matrix[x][y] == 'X';
+    }
+
+    static boolean areAllDead(Ship[] ships) {
+        for (Ship ship: ships) {
+            if (!ship.isDead()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

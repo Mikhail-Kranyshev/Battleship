@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Area {
-    char[][] matrix = new char[10][10];
+    private char[][] matrix = new char[10][10];
 
-    Ship[] ships;
+    private Ship[] ships;
     final static String[] ERRORS = {
             "Error! You entered the wrong coordinates! Try again:\n",
             "Error! Wrong length of %s! Try again:\n",
@@ -20,7 +20,7 @@ public class Area {
         print();
     }
 
-    void clearArea() {
+    private void clearArea() {
         for (char[] chars : matrix) {
             Arrays.fill(chars, '~');
         }
@@ -30,6 +30,7 @@ public class Area {
         System.out.println("The game starts!\n");
         clearArea();
         print();
+        System.out.println("Take a shot!\n");
     }
 
     public void print() {
@@ -49,7 +50,7 @@ public class Area {
         System.out.println();
     }
 
-    void printWithAllShips () {
+    private void printWithAllShips () {
         for (Ship ship: ships) {
             addToArea(ship);
         }
@@ -57,25 +58,32 @@ public class Area {
         removeShipsFromArea();
     }
 
-    void addToArea(Ship ship) {
+    private void addToArea(Ship ship) {
         int i = 0;
         for (int[] cell: ship.getLocation()) {
             matrix[cell[0]][cell[1]] = ship.getShip()[i++];
         }
     }
 
-    void addToArea(int[] coordinate, char shot) {
+
+    private void addToArea(int[] coordinate, char shot) {
         int x = coordinate[0];
         int y = coordinate[1];
-        matrix[x][y] = shot;
-        print();
-        switch (shot) {
-            case 'X' -> System.out.println("You hit a ship!\n");
-            case 'M' -> System.out.println("You missed!\n");
+        matrix[x][y] = shot == 'D' || shot == 'X' ? 'X' : 'M';
+        if (Checker.areAllDead(ships)) {
+            print();
+            switch (shot) {
+                case 'X' -> System.out.println("You hit a ship! Try again:\n");
+                case 'M' -> System.out.println("You missed! Try again:\n");
+                case 'D' -> System.out.println("You sank a ship! Specify a new target:\n");
+            }
+        } else {
+            printWithAllShips();
+            System.out.println("You sank the last ship. You won. Congratulations!\n");
         }
     }
 
-    void removeShipsFromArea() {
+    private void removeShipsFromArea() {
         for (Ship ship: ships) {
             int i = 0;
             for (int[] cell: ship.getLocation()) {
@@ -92,7 +100,7 @@ public class Area {
             String flag = "";
             while (!flag.equals("ok")) {
                 String[] coordinates = scanner.nextLine().split("\\s");
-                System.out.println("");
+                System.out.println();
                 int[] x = Converter.convertingCoordinate(coordinates[0].toCharArray());
                 int[] y = Converter.convertingCoordinate(coordinates[1].toCharArray());
                 switch (flag = Checker.checkCoordinates(x, y, ship.getSize(), ships)) {
@@ -110,7 +118,6 @@ public class Area {
 
     public void shot() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Take a shot!\n");
         String flag = "";
         int[] coordinate;
         while (!flag.equals("ok")) {
@@ -121,13 +128,8 @@ public class Area {
             switch (flag = Checker.checkCoordinate(coordinate, matrix)) {
                 case "wrong input" -> System.out.println(ERRORS[0]);
                 case "already shot" -> System.out.println(ERRORS[4]);
-                default -> {
-                    if(Checker.checkShot(coordinate, ships)) {
-                        addToArea(coordinate, 'X');
-                    } else {
-                        addToArea(coordinate, 'M');
-                    }
-                }
+                default -> addToArea(coordinate, Checker.checkShot(coordinate, ships));
+
             }
         }
     }

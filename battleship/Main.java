@@ -7,11 +7,13 @@ public class Main {
         Area area = new Area(ships);
         area.inputStartCoordinates();
         area.start();
-        area.shot();
-        area.printWithAllShips();
+        while (Checker.areAllDead(ships)) {
+            area.shot();
+        }
+
     }
 
-    static Ship[] createShips() {
+    private static Ship[] createShips() {
         Ship aircraftCarrier = new Ship("the Aircraft Carrier", 5);
         Ship battleship = new Ship("the Battleship", 4);
         Ship submarine = new Ship("Submarine", 3);

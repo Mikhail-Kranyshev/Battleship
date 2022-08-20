@@ -3,16 +3,18 @@ package battleship;
 import java.util.*;
 
 public class Ship {
-    String name;
-    int size;
-    ArrayList<int[]> location;
-    char[] ship;
+    private String name;
+    private int size;
+    private ArrayList<int[]> location;
+    private char[] ship;
+    private boolean dead;
 
     public Ship (String name, int size) {
         this.name = name;
         this.size = size;
         location = new ArrayList<>(size);
         this.ship = new char[size];
+        dead = false;
     }
 
 
@@ -33,12 +35,22 @@ public class Ship {
         return ship;
     }
 
-    void setShot() {
+    public boolean isDead() {
+        return dead;
+    }
+
+    private void setShot() {
         Arrays.fill(ship, 'O');
     }
 
-    void setShot(int index) {
+    protected void setShot(int index) {
         ship[index] = 'X';
+        dead = true;
+        for (char ch: ship) {
+            if (ch == 'O') {
+                dead = false;
+            }
+        }
     }
 
     public void setLocation(int[] x, int[] y) {
