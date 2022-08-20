@@ -4,10 +4,11 @@ public class Main {
 
     public static void game() {
         Ship[] ships = createShips();
-        Area area = new Area();
-        area.inputStartCoordinates(ships);
+        Area area = new Area(ships);
+        area.inputStartCoordinates();
         area.start();
         area.shot();
+        area.printWithAllShips();
     }
 
     static Ship[] createShips() {

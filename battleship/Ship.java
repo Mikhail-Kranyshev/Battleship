@@ -6,11 +6,13 @@ public class Ship {
     String name;
     int size;
     ArrayList<int[]> location;
+    char[] ship;
 
     public Ship (String name, int size) {
         this.name = name;
         this.size = size;
         location = new ArrayList<>(size);
+        this.ship = new char[size];
     }
 
 
@@ -25,6 +27,18 @@ public class Ship {
 
     public ArrayList<int[]> getLocation() {
         return location;
+    }
+
+    public char[] getShip() {
+        return ship;
+    }
+
+    void setShot() {
+        Arrays.fill(ship, 'O');
+    }
+
+    void setShot(int index) {
+        ship[index] = 'X';
     }
 
     public void setLocation(int[] x, int[] y) {
@@ -52,5 +66,6 @@ public class Ship {
                 location.add(new int[]{i, x[1]});
             }
         }
+        setShot();
     }
 }

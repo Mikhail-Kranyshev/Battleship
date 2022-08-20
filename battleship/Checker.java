@@ -1,7 +1,20 @@
 package battleship;
 
+import java.util.Arrays;
+
 public class Checker {
 
+    public static boolean checkShot(int[] coordinate, Ship[] ships) {
+        for (Ship ship: ships) {
+            for (int i = 0; i < ship.getSize(); i++) {
+                if (Arrays.equals(ship.getLocation().get(i), coordinate)) {
+                    ship.setShot(i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     public static String checkCoordinate(int[] coordinate, char[][] matrix) {
         if (isEmpty(coordinate)) {
