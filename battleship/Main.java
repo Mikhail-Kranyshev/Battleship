@@ -6,6 +6,8 @@ public class Main {
         Ship[] ships = createShips();
         Area area = new Area();
         area.inputStartCoordinates(ships);
+        area.start();
+        area.shot();
     }
 
     static Ship[] createShips() {
@@ -14,8 +16,7 @@ public class Main {
         Ship submarine = new Ship("Submarine", 3);
         Ship cruiser = new Ship("the Cruiser", 3);
         Ship destroyer = new Ship("the Destroyer", 2);
-        Ship[] ships = new Ship[]{aircraftCarrier, battleship, submarine, cruiser, destroyer};
-        return ships;
+        return new Ship[]{aircraftCarrier, battleship, submarine, cruiser, destroyer};
     }
 
     public static void main(String[] args) {

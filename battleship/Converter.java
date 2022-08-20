@@ -1,7 +1,5 @@
 package battleship;
 
-import java.util.Arrays;
-
 public class Converter {
 
     public static int convertingLetterToNumber(char ch) {
@@ -29,7 +27,7 @@ public class Converter {
             } else {
                 coordinate[1] = Integer.parseInt(String.valueOf(chars[1])) - 1;
             }
-            if (coordinate[0] == -1 && (coordinate[1] < 0 || coordinate[1] > 9)) {
+            if (coordinate[0] == -1 || (coordinate[1] < 0 || coordinate[1] > 9)) {
                 coordinate = new int[]{-1, -1};
             }
         }

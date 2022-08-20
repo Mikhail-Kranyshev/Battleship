@@ -1,12 +1,20 @@
 package battleship;
 
-import java.util.ArrayList;
-
 public class Checker {
 
+
+    public static String checkCoordinate(int[] coordinate, char[][] matrix) {
+        if (isEmpty(coordinate)) {
+            return "wrong input";
+        }
+        if (isAlreadyShot(coordinate, matrix)) {
+            return "already shot";
+        }
+        return "ok";
+    }
     public static String checkCoordinates(int[] x, int[] y, int size, Ship[] ships) {
         String status = "ok";
-        if (coordinateIsEmpty(x) || coordinateIsEmpty(y)) {
+        if (isEmpty(x) || isEmpty(y)) {
             status = "wrong input";
         }
         if (isWrongLength(x, y, size)) {
@@ -22,7 +30,7 @@ public class Checker {
     }
 
 
-    private static boolean coordinateIsEmpty(int[] coordinate) {
+    private static boolean isEmpty(int[] coordinate) {
         return coordinate[0] == -1 || coordinate[1] == -1;
     }
 
@@ -49,5 +57,11 @@ public class Checker {
             }
         }
         return false;
+    }
+
+    static boolean isAlreadyShot(int[] coordinate, char[][] matrix) {
+        int x = coordinate[0];
+        int y = coordinate[1];
+        return matrix[x][y] == 'M' || matrix[x][y] == 'X';
     }
 }
