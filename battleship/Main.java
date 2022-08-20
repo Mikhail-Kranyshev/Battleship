@@ -3,23 +3,21 @@ package battleship;
 public class Main {
 
     public static void game() {
-        Ship[] ships = createShips();
-        Area area = new Area(ships);
-        area.inputStartCoordinates();
-        area.start();
-        while (Checker.areAllDead(ships)) {
-            area.shot();
+        Player player1 = new Player();
+        Player player2 = new Player();
+        player1.start();
+        player2.start();
+        boolean playerWin;
+        while (true) {
+            playerWin = player1.turn(player2);
+            if (playerWin) {
+                break;
+            }
+            playerWin = player2.turn(player1);
+            if (playerWin) {
+                break;
+            }
         }
-
-    }
-
-    private static Ship[] createShips() {
-        Ship aircraftCarrier = new Ship("the Aircraft Carrier", 5);
-        Ship battleship = new Ship("the Battleship", 4);
-        Ship submarine = new Ship("Submarine", 3);
-        Ship cruiser = new Ship("the Cruiser", 3);
-        Ship destroyer = new Ship("the Destroyer", 2);
-        return new Ship[]{aircraftCarrier, battleship, submarine, cruiser, destroyer};
     }
 
     public static void main(String[] args) {

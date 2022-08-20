@@ -1,6 +1,6 @@
 package battleship;
 
-public class Converter {
+public abstract class Converter {
 
     public static int convertingLetterToNumber(char ch) {
         return switch (ch) {
@@ -21,11 +21,15 @@ public class Converter {
     public static int[] convertingCoordinate(char[] chars) {
         int[] coordinate = {-1, -1};
         if (chars.length == 2 || chars.length == 3) {
-            coordinate[0] = convertingLetterToNumber(chars[0]);
-            if (chars.length == 3) {
-                coordinate[1] = Integer.parseInt(String.valueOf(new char[]{chars[1], chars[2]})) - 1;
-            } else {
-                coordinate[1] = Integer.parseInt(String.valueOf(chars[1])) - 1;
+            try {
+                coordinate[0] = convertingLetterToNumber(chars[0]);
+                if (chars.length == 3) {
+                    coordinate[1] = Integer.parseInt(String.valueOf(new char[]{chars[1], chars[2]})) - 1;
+                } else {
+                    coordinate[1] = Integer.parseInt(String.valueOf(chars[1])) - 1;
+                }
+            } catch (NumberFormatException exception) {
+                coordinate = new int[]{-1, -1};
             }
             if (coordinate[0] == -1 || (coordinate[1] < 0 || coordinate[1] > 9)) {
                 coordinate = new int[]{-1, -1};

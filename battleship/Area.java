@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Area {
-    private char[][] matrix = new char[10][10];
+    private final char[][] matrix = new char[10][10];
 
     private Ship[] ships;
     final static String[] ERRORS = {
@@ -14,23 +14,24 @@ public class Area {
             "Error! You placed it too close to another one. Try again:\n",
             "Error! You already shot here! Try again:\n"
     };
+
+    public Area() {
+        clearArea();
+    }
+
     public Area(Ship[] ships) {
         clearArea();
         this.ships = ships;
-        print();
+    }
+
+    protected char[][] getMatrix() {
+        return matrix;
     }
 
     private void clearArea() {
         for (char[] chars : matrix) {
             Arrays.fill(chars, '~');
         }
-    }
-
-    public void start() {
-        System.out.println("The game starts!\n");
-        clearArea();
-        print();
-        System.out.println("Take a shot!\n");
     }
 
     public void print() {
@@ -50,45 +51,49 @@ public class Area {
         System.out.println();
     }
 
-    private void printWithAllShips () {
-        for (Ship ship: ships) {
-            addToArea(ship);
+    public void print(Area area) {
+        System.out.print(" ");
+        for (int i = 1; i < 11; i++) {
+            System.out.print(" " + i);
         }
+        System.out.println();
+        char ch = 'A';
+        for (char[] chars : area.getMatrix()) {
+            System.out.print(ch++);
+            for (char aChar : chars) {
+                System.out.print(" " + aChar);
+            }
+            System.out.println();
+        }
+        System.out.println("---------------------");
         print();
-        removeShipsFromArea();
     }
 
     private void addToArea(Ship ship) {
         int i = 0;
-        for (int[] cell: ship.getLocation()) {
+        for (int[] cell : ship.getLocation()) {
             matrix[cell[0]][cell[1]] = ship.getShip()[i++];
         }
     }
 
 
-    private void addToArea(int[] coordinate, char shot) {
+    private boolean addToArea(int[] coordinate, char shot, Ship[] enemyShips, char[][] enemyArea) {
         int x = coordinate[0];
         int y = coordinate[1];
         matrix[x][y] = shot == 'D' || shot == 'X' ? 'X' : 'M';
-        if (Checker.areAllDead(ships)) {
+        enemyArea[x][y] = shot == 'D' || shot == 'X' ? 'X' : 'M';
+        if (Checker.areAllDead(enemyShips)) {
             print();
             switch (shot) {
-                case 'X' -> System.out.println("You hit a ship! Try again:\n");
-                case 'M' -> System.out.println("You missed! Try again:\n");
-                case 'D' -> System.out.println("You sank a ship! Specify a new target:\n");
+                case 'X' -> System.out.println("You hit a ship!\n");
+                case 'M' -> System.out.println("You missed!\n");
+                case 'D' -> System.out.println("You sank a ship!\n");
             }
+            Player.promptEnterKey();
+            return false;
         } else {
-            printWithAllShips();
             System.out.println("You sank the last ship. You won. Congratulations!\n");
-        }
-    }
-
-    private void removeShipsFromArea() {
-        for (Ship ship: ships) {
-            int i = 0;
-            for (int[] cell: ship.getLocation()) {
-                matrix[cell[0]][cell[1]] = ship.getShip()[i++] == 'O' ? '~' : 'X';
-            }
+            return true;
         }
     }
 
@@ -101,14 +106,18 @@ public class Area {
             while (!flag.equals("ok")) {
                 String[] coordinates = scanner.nextLine().split("\\s");
                 System.out.println();
-                int[] x = Converter.convertingCoordinate(coordinates[0].toCharArray());
-                int[] y = Converter.convertingCoordinate(coordinates[1].toCharArray());
-                switch (flag = Checker.checkCoordinates(x, y, ship.getSize(), ships)) {
-                    case "wrong input" -> System.out.println(ERRORS[0]);
-                    case "wrong length" -> System.out.println(ERRORS[1].formatted(ship.getName()));
-                    case "wrong location" -> System.out.println(ERRORS[2]);
-                    case "too close" -> System.out.println(ERRORS[3]);
-                    default -> ship.setLocation(x, y);
+                if (coordinates.length == 2) {
+                    int[] x = Converter.convertingCoordinate(coordinates[0].toCharArray());
+                    int[] y = Converter.convertingCoordinate(coordinates[1].toCharArray());
+                    switch (flag = Checker.checkCoordinates(x, y, ship.getSize(), ships)) {
+                        case "wrong input" -> System.out.println(ERRORS[0]);
+                        case "wrong length" -> System.out.println(ERRORS[1].formatted(ship.getName()));
+                        case "wrong location" -> System.out.println(ERRORS[2]);
+                        case "too close" -> System.out.println(ERRORS[3]);
+                        default -> ship.setLocation(x, y);
+                    }
+                } else {
+                    System.out.println(ERRORS[0]);
                 }
             }
             addToArea(ship);
@@ -116,19 +125,20 @@ public class Area {
         }
     }
 
-    public void shot() {
+    public boolean shot(Ship[] enemyShips, char[][] enemyArea) {
         Scanner scanner = new Scanner(System.in);
-        String flag = "";
         int[] coordinate;
-        while (!flag.equals("ok")) {
+        while (true) {
             String string = scanner.next();
             char[] chars = string.toCharArray();
             coordinate = Converter.convertingCoordinate(chars);
             System.out.println();
-            switch (flag = Checker.checkCoordinate(coordinate, matrix)) {
+            switch (Checker.checkCoordinate(coordinate, matrix)) {
                 case "wrong input" -> System.out.println(ERRORS[0]);
                 case "already shot" -> System.out.println(ERRORS[4]);
-                default -> addToArea(coordinate, Checker.checkShot(coordinate, ships));
+                default -> {
+                    return addToArea(coordinate, Checker.checkShot(coordinate, enemyShips), enemyShips, enemyArea);
+                }
 
             }
         }

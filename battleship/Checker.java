@@ -2,10 +2,10 @@ package battleship;
 
 import java.util.Arrays;
 
-public class Checker {
+public abstract class Checker {
 
     public static char checkShot(int[] coordinate, Ship[] ships) {
-        for (Ship ship: ships) {
+        for (Ship ship : ships) {
             for (int i = 0; i < ship.getSize(); i++) {
                 if (Arrays.equals(ship.getLocation().get(i), coordinate)) {
                     ship.setShot(i);
@@ -28,10 +28,11 @@ public class Checker {
         }
         return "ok";
     }
+
     public static String checkCoordinates(int[] x, int[] y, int size, Ship[] ships) {
         String status = "ok";
         if (isEmpty(x) || isEmpty(y)) {
-            status = "wrong input";
+            return "wrong input";
         }
         if (isWrongLength(x, y, size)) {
             status = "wrong length";
@@ -59,9 +60,9 @@ public class Checker {
     }
 
     private static boolean isTooClose(int[] x, int[] y, Ship[] ships) {
-        for (Ship ship: ships) {
+        for (Ship ship : ships) {
             if (!(ship.getLocation() == null)) {
-                for (int[] cell: ship.getLocation()) {
+                for (int[] cell : ship.getLocation()) {
                     for (int i = cell[0] - 1; i <= cell[0] + 1; i++) {
                         for (int j = cell[1] - 1; j <= cell[1] + 1; j++) {
                             if ((x[0] == i && x[1] == j) || (y[0] == i && y[1] == j)) {
@@ -82,7 +83,7 @@ public class Checker {
     }
 
     static boolean areAllDead(Ship[] ships) {
-        for (Ship ship: ships) {
+        for (Ship ship : ships) {
             if (!ship.isDead()) {
                 return true;
             }

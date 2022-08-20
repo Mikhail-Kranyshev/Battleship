@@ -3,20 +3,19 @@ package battleship;
 import java.util.*;
 
 public class Ship {
-    private String name;
-    private int size;
-    private ArrayList<int[]> location;
-    private char[] ship;
+    private final String name;
+    private final int size;
+    private final ArrayList<int[]> location;
+    private final char[] ship;
     private boolean dead;
 
-    public Ship (String name, int size) {
+    public Ship(String name, int size) {
         this.name = name;
         this.size = size;
         location = new ArrayList<>(size);
         this.ship = new char[size];
         dead = false;
     }
-
 
 
     public String getName() {
@@ -46,9 +45,10 @@ public class Ship {
     protected void setShot(int index) {
         ship[index] = 'X';
         dead = true;
-        for (char ch: ship) {
+        for (char ch : ship) {
             if (ch == 'O') {
                 dead = false;
+                break;
             }
         }
     }
